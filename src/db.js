@@ -1,11 +1,12 @@
 import {Pool} from "pg";
+import { db } from "./config.js";
 
-const db = new Pool({
-    user: 'postgres',
-    password: '12345',
-    host: 'localhost',
-    port: 5432,
-    database: 'taskdb'
+const pool = new Pool({
+    user: db.user,
+    password: db.password,
+    host: db.host,
+    port: db.port,
+    database: db.database
 })
 
-export default db
+export default pool
