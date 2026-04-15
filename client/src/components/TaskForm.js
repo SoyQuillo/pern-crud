@@ -5,20 +5,42 @@ import {
   CardContent,
   TextField,
   Button,
+  CircularProgress,
 } from "@mui/material";
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function TaskForm() {
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+
   const [task, setTask] = useState({ title: "", description: "" });
 
   const handleChange = (e) => {
-      setTask({...task, [e.target.name]: e.target.value})
+    setTask({ ...task, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(task);
+
+    setLoading(true);
+
+    const res = await fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(task),
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+
+    setLoading(false);
+    navigate("/");
   };
 
   return (
@@ -75,8 +97,17 @@ function TaskForm() {
                 }}
               />
 
-              <Button variant="contained" color="primary" type="submit">
-                Save
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                disabled={!task.title || !task.description}
+              >
+                {loading ? (
+                  <CircularProgress color="inherit" size={24} />
+                ) : (
+                  "Create"
+                )}
               </Button>
             </form>
           </CardContent>
